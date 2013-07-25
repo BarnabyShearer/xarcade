@@ -28,7 +28,6 @@
 
 #include "Xarcade.h"
 
-uint8_t key = 0;
 const uint8_t Mapping[] PROGMEM = {
     HID_KEYBOARD_SC_A,
     HID_KEYBOARD_SC_B,
@@ -66,7 +65,7 @@ const uint8_t Mapping[] PROGMEM = {
 
 
 /** Buffer to hold the previously generated Keyboard HID report, for comparison purposes inside the HID class driver. */
-static uint8_t PrevKeyboardHIDReportBuffer[sizeof(USB_KeyboardReport_Data_t)];
+static uint8_t PrevKeyboardHIDReportBuffer[sizeof(USB_KeyboardReport_Data_32_t)];
 
 /** LUFA HID Class driver interface configuration and state information. This structure is
  *  passed to all HID Class driver functions, so that multiple instances of the same class
@@ -138,21 +137,20 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t* const HIDIn
                                          void* ReportData,
                                          uint16_t* const ReportSize)
 {
-    USB_KeyboardReport_Data_t* KeyboardReport = (USB_KeyboardReport_Data_t*)ReportData;
+    USB_KeyboardReport_Data_32_t* KeyboardReport = (USB_KeyboardReport_Data_32_t*)ReportData;
 
     uint8_t UsedKeyCodes = 0;
 
-    key++;
-    key %= 8;
-
-    for(int x=0; x<4; x++) {
+    for(uint8_t key=0; key<8; key++) {
         PORTB = ~(1<<key);
-        if((PIND & (1<<x)) ^ (1<<x)) {
-            KeyboardReport->KeyCode[UsedKeyCodes++] = pgm_read_byte(&(Mapping[x*8 + key]));
+        for(uint8_t x=0; x<4; x++) {
+            if((PIND & (1<<x)) ^ (1<<x)) {
+                KeyboardReport->KeyCode[UsedKeyCodes++] = pgm_read_byte(&(Mapping[x*8 + key]));
+            }
         }
     }
 
-    *ReportSize = sizeof(USB_KeyboardReport_Data_t);
+    *ReportSize = sizeof(USB_KeyboardReport_Data_32_t);
     return false;
 }
 

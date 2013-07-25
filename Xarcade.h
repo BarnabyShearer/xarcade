@@ -49,6 +49,13 @@
 
         #include <LUFA/Drivers/USB/USB.h>
 
+        typedef struct
+        {
+            uint8_t Modifier;
+            uint8_t Reserved;
+            uint8_t KeyCode[32];
+        } ATTR_PACKED USB_KeyboardReport_Data_32_t;
+
     /* Function Prototypes: */
         void SetupHardware(void);
 

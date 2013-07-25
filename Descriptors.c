@@ -48,7 +48,7 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM KeyboardReport[] =
     /* Use the HID class driver's standard Keyboard report.
      *   Max simultaneous keys: 6
      */
-    HID_DESCRIPTOR_KEYBOARD(6)
+    HID_DESCRIPTOR_KEYBOARD(32)
 };
 
 /** Device descriptor structure. This descriptor, located in FLASH memory, describes the overall
