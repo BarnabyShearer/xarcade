@@ -56,12 +56,12 @@ const uint8_t Mapping[] PROGMEM = {
     HID_KEYBOARD_SC_X,
     HID_KEYBOARD_SC_Y,
     HID_KEYBOARD_SC_Z,
-	HID_KEYBOARD_SC_1_AND_EXCLAMATION,
-	HID_KEYBOARD_SC_2_AND_AT,
-	HID_KEYBOARD_SC_3_AND_HASHMARK,
-	HID_KEYBOARD_SC_4_AND_DOLLAR,
-	HID_KEYBOARD_SC_5_AND_PERCENTAGE,
-	HID_KEYBOARD_SC_6_AND_CARET,
+    HID_KEYBOARD_SC_1_AND_EXCLAMATION,
+    HID_KEYBOARD_SC_2_AND_AT,
+    HID_KEYBOARD_SC_3_AND_HASHMARK,
+    HID_KEYBOARD_SC_4_AND_DOLLAR,
+    HID_KEYBOARD_SC_5_AND_PERCENTAGE,
+    HID_KEYBOARD_SC_6_AND_CARET,
 };
 
 
@@ -73,19 +73,19 @@ static uint8_t PrevKeyboardHIDReportBuffer[sizeof(USB_KeyboardReport_Data_t)];
  *  within a device can be differentiated from one another.
  */
 USB_ClassInfo_HID_Device_t Keyboard_HID_Interface =
- 	{
-		.Config =
-			{
-				.InterfaceNumber              = 0,
-				.ReportINEndpoint             =
-					{
-						.Address              = KEYBOARD_EPADDR,
-						.Size                 = KEYBOARD_EPSIZE,
-						.Banks                = 1,
-					},
-				.PrevReportINBuffer           = PrevKeyboardHIDReportBuffer,
-				.PrevReportINBufferSize       = sizeof(PrevKeyboardHIDReportBuffer),
-			},
+     {
+        .Config =
+            {
+                .InterfaceNumber              = 0,
+                .ReportINEndpoint             =
+                    {
+                        .Address              = KEYBOARD_EPADDR,
+                        .Size                 = KEYBOARD_EPSIZE,
+                        .Banks                = 1,
+                    },
+                .PrevReportINBuffer           = PrevKeyboardHIDReportBuffer,
+                .PrevReportINBufferSize       = sizeof(PrevKeyboardHIDReportBuffer),
+            },
     };
 
 
@@ -94,32 +94,32 @@ USB_ClassInfo_HID_Device_t Keyboard_HID_Interface =
  */
 int main(void)
 {
-	SetupHardware();
+    SetupHardware();
 
-	GlobalInterruptEnable();
+    GlobalInterruptEnable();
 
-	for (;;)
-	{
-		HID_Device_USBTask(&Keyboard_HID_Interface);
-		USB_USBTask();
-	}
+    for (;;)
+    {
+        HID_Device_USBTask(&Keyboard_HID_Interface);
+        USB_USBTask();
+    }
 }
 
 /** Configures the board hardware and chip peripherals for the demo's functionality. */
 void SetupHardware()
 {
-	/* Disable watchdog if enabled by bootloader/fuses */
-	MCUSR &= ~(1 << WDRF);
-	wdt_disable();
+    /* Disable watchdog if enabled by bootloader/fuses */
+    MCUSR &= ~(1 << WDRF);
+    wdt_disable();
 
-	/* Disable clock division */
-	clock_prescale_set(clock_div_1);
+    /* Disable clock division */
+    clock_prescale_set(clock_div_1);
 
-	/* Hardware Initialization */
+    /* Hardware Initialization */
     DDRD = 0b00000000; //Set all port D pins to input
     PORTD = 0b11111111; //Enable pullups on all port D pins
     DDRB = 0b11111111; //Set all port B pins to output
-	USB_Init();
+    USB_Init();
 }
 
 /** HID class driver callback function for the creation of HID reports to the host.
@@ -138,9 +138,9 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t* const HIDIn
                                          void* ReportData,
                                          uint16_t* const ReportSize)
 {
-	USB_KeyboardReport_Data_t* KeyboardReport = (USB_KeyboardReport_Data_t*)ReportData;
+    USB_KeyboardReport_Data_t* KeyboardReport = (USB_KeyboardReport_Data_t*)ReportData;
 
-	uint8_t UsedKeyCodes = 0;
+    uint8_t UsedKeyCodes = 0;
 
     key++;
     key %= 8;
@@ -152,8 +152,8 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t* const HIDIn
         }
     }
 
-	*ReportSize = sizeof(USB_KeyboardReport_Data_t);
-	return false;
+    *ReportSize = sizeof(USB_KeyboardReport_Data_t);
+    return false;
 }
 
 /** HID class driver callback function for the processing of HID reports from the host.
@@ -186,18 +186,18 @@ void EVENT_USB_Device_Disconnect(void)
 void EVENT_USB_Device_ConfigurationChanged(void)
 {
     HID_Device_ConfigureEndpoints(&Keyboard_HID_Interface);
-	USB_Device_EnableSOFEvents();
+    USB_Device_EnableSOFEvents();
 }
 
 /** Event handler for the library USB Control Request reception event. */
 void EVENT_USB_Device_ControlRequest(void)
 {
-	HID_Device_ProcessControlRequest(&Keyboard_HID_Interface);
+    HID_Device_ProcessControlRequest(&Keyboard_HID_Interface);
 }
 
 /** Event handler for the USB device Start Of Frame event. */
 void EVENT_USB_Device_StartOfFrame(void)
 {
-	HID_Device_MillisecondElapsed(&Keyboard_HID_Interface);
+    HID_Device_MillisecondElapsed(&Keyboard_HID_Interface);
 }
 
